@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management | PlannerPro Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #FF7F50;
+      --primary-light: #FFA07A;
+      --primary-dark: #E66A3B;
+      --secondary: #5A2D0C;
+      --background: #F9F5F0;
+      --card-bg: #FFFFFF;
+      --text: #333333;
+      --text-light: #777777;
+      --error: #E74C3C;
+      --success: #2ECC71;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+    }
+
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: opacity 0.3s;
+    }
+
+    .nav a:hover {
+      opacity: 0.8;
+    }
+
+    .admin-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-title {
+      color: var(--secondary);
+      font-size: 1.8rem;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .user-table th, .user-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    .user-table th {
+      background: var(--primary-light);
+      color: white;
+      font-weight: 500;
+    }
+
+    .user-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .user-table tr:hover {
+      background: rgba(255, 160, 122, 0.1);
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-sm {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-danger {
+      background: var(--error);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .search-bar button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .footer {
+        background: var(--secondary);
+        color: white;
+        text-align: center;
+        padding: 1.5rem;
+        margin-top: 3rem;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+      }
+
+      .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .user-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">PlannerPro Admin</div>
+    <div class="nav">
+      <a href="admin-users.html"><i class="fas fa-users"></i> Users</a>
+      <a href="dashboard.html"><i class="fas fa-sign-out-alt"></i> Exit Admin</a>
+    </div>
+  </div>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1 class="admin-title"><i class="fas fa-users-cog"></i> User Management</h1>
+      <div class="user-count" id="userCount">Loading users...</div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search users...">
+      <button onclick="searchUsers()"><i class="fas fa-search"></i></button>
+    </div>
+
+    <div class="table-container">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Phone</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <!-- Users will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 PlannerPro. All rights reserved.
+  </div>
+
+  <script>
+    // Load all users from localStorage
+    function loadUsers() {
+      const users = JSON.parse(localStorage.getItem('users')) || {};
+      const usersTableBody = document.getElementById('usersTableBody');
+      const userCount = document.getElementById('userCount');
+      
+      usersTableBody.innerHTML = '';
+      
+      if (Object.keys(users).length === 0) {
+        usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No users found</td></tr>';
+        userCount.textContent = '0 users';
+        return;
+      }
+      
+      let userList = Object.values(users);
+      userCount.textContent = `${userList.length} users`;
+      
+      userList.forEach(user => {
+        const row = document.createElement('tr');
+        
+        const joinDate = new Date(user.createdAt);
+        const formattedDate = joinDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        
+        row.innerHTML = `
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${user.password}</td>
+          <td>${user.phone}</td>
+          <td>${formattedDate}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="viewUser('${user.username}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.username}')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        `;
+        
+        usersTableBody.appendChild(row);
+      });
+    }
+    
+    // Search users
+    function searchUsers() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const users = JSON.parse(localStorage.getItem('users')) || {};
+      const filteredUsers = Object.values(users).filter(user => 
+        user.username.toLowerCase().includes(searchTerm) || 
+        user.email.toLowerCase().includes(searchTerm) ||
+        user.phone.toLowerCase().includes(searchTerm)
+      );
+      
+      const usersTableBody = document.getElementById('usersTableBody');
+      usersTableBody.innerHTML = '';
+      
+      if (filteredUsers.length === 0) {
+        usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No matching users found</td></tr>';
+        return;
+      }
+      
+      filteredUsers.forEach(user => {
+        const row = document.createElement('tr');
+        
+        const joinDate = new Date(user.createdAt);
+        const formattedDate = joinDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        
+        row.innerHTML = `
+          <td>${user.username}</td>
+          <td>${user.email}</td>
+          <td>${user.phone}</td>
+          <td>${formattedDate}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="viewUser('${user.username}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteUser('${user.username}')">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        `;
+        
+        usersTableBody.appendChild(row);
+      });
+    }
+    
+    // View user details
+    function viewUser(username) {
+      const users = JSON.parse(localStorage.getItem('users')) || {};
+      const user = users[username];
+      
+      if (!user) {
+        alert('User not found!');
+        return;
+      }
+      
+      const joinDate = new Date(user.createdAt);
+      const formattedDate = joinDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      const message = `
+        Username: ${user.username}
+        Email: ${user.email}
+        Phone: ${user.phone}
+        Account Created: ${formattedDate}
+      `;
+      
+      alert(message);
+    }
+    
+    // Delete user
+    function deleteUser(username) {
+      if (!confirm(`Are you sure you want to delete user "${username}"? This cannot be undone.`)) {
+        return;
+      }
+      
+      const users = JSON.parse(localStorage.getItem('users')) || {};
+      
+      if (!users[username]) {
+        alert('User not found!');
+        return;
+      }
+      
+      delete users[username];
+      localStorage.setItem('users', JSON.stringify(users));
+      
+      // Also check if this is the current user
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      if (currentUser && currentUser.username === username) {
+        localStorage.removeItem('user');
+      }
+      
+      alert('User deleted successfully!');
+      loadUsers(); // Refresh the table
+    }
+    
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if current user is admin (you'll need to implement this)
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      
+      // In a real app, you would check user.role === 'admin'
+      // For now we'll just check if user exists
+      if (!currentUser) {
+        alert('You must be logged in as admin to access this page');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      loadUsers();
+      
+      // Add search on Enter key
+      document.getElementById('searchInput').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          searchUsers();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

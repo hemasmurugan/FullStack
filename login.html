@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PlannerPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF7F50;
+            --primary-light: #FFA07A;
+            --primary-dark: #E66A3B;
+            --secondary: #5A2D0C;
+            --background: #F9F5F0;
+            --card-bg: #FFFFFF;
+            --text: #333333;
+            --text-light: #777777;
+            --error: #E74C3C;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        
+        .login-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        
+        .logo {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .nav a:hover {
+            opacity: 0.8;
+        }
+        
+        .nav a i {
+            font-size: 1.1rem;
+        }
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.2);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .links {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .links a:hover {
+            color: var(--primary-dark);
+        }
+        
+        .error-message {
+            color: var(--error);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">PlannerPro</div>
+        <h2>Welcome Back</h2>
+        
+        <div class="input-group">
+            <label for="loginUsername">Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter your username">
+        </div>
+        
+        <div class="input-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password">
+        </div>
+        
+        <button class="btn" onclick="loginUser()">Login</button>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="links">
+        <a href="recovery.html">Can't access account?</a>
+        <a href="signup.html">Don't have an account? Sign Up</a>
+        <a href="javascript:void(0);" onclick="clearLoginFields()">Clear fields</a>
+        <a href="homepage.html">Go back to Homepage</a>
+        </div>
+    </div>
+    
+
+    <script>
+        function clearLoginFields() {
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        function loginUser() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('errorMessage');
+
+            // Basic validation
+            if (!username || !password) {
+                errorElement.textContent = 'Please fill in all fields';
+                errorElement.style.display = 'block';
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (user && user.username === username && user.password === password) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                window.location.href = 'dashboard.html';
+            } else {
+                errorElement.textContent = 'Invalid username or password';
+                errorElement.style.display = 'block';
+            }
+        }
+
+        // Add event listeners for input fields to hide error when typing
+        document.getElementById('loginUsername').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+        document.getElementById('loginPassword').addEventListener('input', function() {
+            document.getElementById('errorMessage').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

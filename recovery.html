@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Recovery | PlannerPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF7F50;
+            --primary-light: #FFA07A;
+            --primary-dark: #E66A3B;
+            --secondary: #5A2D0C;
+            --background: #F9F5F0;
+            --card-bg: #FFFFFF;
+            --text: #333333;
+            --text-light: #777777;
+            --error: #E74C3C;
+            --success: #2ECC71;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .recovery-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .logo {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab {
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .instruction {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 127, 80, 0.2);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 1.5rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .success-message {
+            color: var(--success);
+            margin-top: 1rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .recovery-container {
+                padding: 1.5rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="recovery-container">
+        <div class="logo">PlannerPro</div>
+        <h2>Account Recovery</h2>
+        <p class="instruction">Enter your email address to receive a recovery link</p>
+        
+        <form id="recoveryForm">
+            <div class="form-group">
+                <label for="recoveryEmail">Email Address</label>
+                <input type="email" id="recoveryEmail" placeholder="Your registered email">
+                <div class="error-message" id="emailError"></div>
+            </div>
+            
+            <button type="button" class="btn" onclick="sendRecoveryEmail()">
+                <i class="fas fa-paper-plane"></i> Send Recovery Email
+            </button>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> Recovery email sent successfully!
+                <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);">
+                    Check your inbox for instructions to reset your credentials.
+                </p>
+            </div>
+        </form>
+        
+        <a href="login.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Login
+        </a>
+    </div>
+
+    <script>
+        function sendRecoveryEmail() {
+            const email = document.getElementById('recoveryEmail').value.trim();
+            const errorElement = document.getElementById('emailError');
+            const successElement = document.getElementById('successMessage');
+            
+            // Hide previous messages
+            errorElement.style.display = 'none';
+            successElement.style.display = 'none';
+            
+            // Basic validation
+            if (!email) {
+                errorElement.textContent = 'Please enter your email address';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            // Check email format
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                errorElement.textContent = 'Please enter a valid email address';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            // Check if email exists in users
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            let userExists = false;
+            
+            for (const username in users) {
+                if (users[username].email === email) {
+                    userExists = true;
+                    break;
+                }
+            }
+            
+            if (userExists) {
+                // In a real application, you would:
+                // 1. Generate a secure token
+                // 2. Store it with expiration in your database
+                // 3. Send email with recovery link
+                
+                // For demo purposes, we'll simulate this
+                simulateEmailSending(email);
+                
+                // Show success message
+                successElement.style.display = 'block';
+            } else {
+                errorElement.textContent = 'No account found with this email';
+                errorElement.style.display = 'block';
+            }
+        }
+        
+        function simulateEmailSending(email) {
+            // This is just for demonstration
+            // In a real app, you would make an API call to your backend
+            console.log(`Simulating sending recovery email to: ${email}`);
+            
+            // The email would contain a link like:
+            // /reset-credentials.html?token=UNIQUE_TOKEN&email=${encodeURIComponent(email)}
+            
+            // For now, we'll just store the email in localStorage
+            // to simulate the reset flow
+            localStorage.setItem('recoveryEmail', email);
+        }
+    </script>
+</body>
+</html>
