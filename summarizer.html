@@ -264,8 +264,12 @@
             const outputSection = document.getElementById('output-section');
             const summaryOutput = document.getElementById('summary-output');
             
+            // Hugging Face API configuration
+            const HF_API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn";
+            const HF_API_KEY = ""; // You'll need to add your Hugging Face API key here
+            
             // Summarize button click handler
-            summarizeBtn.addEventListener('click', function() {
+            summarizeBtn.addEventListener('click', async function() {
                 const text = inputText.value.trim();
                 
                 if (text === '') {
@@ -273,9 +277,12 @@
                     return;
                 }
                 
-                // In a real implementation, you would call your summarization API here
-                // For now, we'll simulate a summary
-                simulateSummarization(text);
+                try {
+                    await generateSummary(text);
+                } catch (error) {
+                    console.error('Error generating summary:', error);
+                    summaryOutput.textContent = 'Error generating summary. Please try again.';
+                }
             });
             
             // New summary button click handler
@@ -302,21 +309,44 @@
                 alert('Summary saved to notes!');
             });
             
-            // Simulate summarization (replace with actual API call)
-            function simulateSummarization(text) {
+            // Generate summary using Hugging Face API
+            async function generateSummary(text) {
                 // Show loading state
                 summaryOutput.textContent = 'Generating summary...';
                 outputSection.style.display = 'block';
                 
-                // Simulate API delay
-                setTimeout(function() {
-                    // This is a mock summary - replace with actual summarization logic
-                    const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
-                    const summaryLength = Math.max(1, Math.floor(sentences.length / 3));
-                    const summary = sentences.slice(0, summaryLength).join(' ');
+                try {
+                    const response = await fetch(HF_API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${HF_API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            inputs: text,
+                            parameters: {
+                                max_length: 150,
+                                min_length: 30,
+                                do_sample: false
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('API request failed');
+                    }
+
+                    const result = await response.json();
                     
-                    summaryOutput.textContent = summary;
-                }, 1000);
+                    if (Array.isArray(result) && result.length > 0) {
+                        summaryOutput.textContent = result[0].summary_text;
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    summaryOutput.textContent = 'Error generating summary. Please try again.';
+                }
             }
         });
     </script>
